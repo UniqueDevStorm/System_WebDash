@@ -6,4 +6,6 @@ router.get('/', (ctx) => {
   ctx.body = { happy: 'hacking' }
 })
 
-export default router
+export default (ctx: any, next: any) => {
+  router.routes()(ctx, next)
+}

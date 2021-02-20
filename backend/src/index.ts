@@ -1,17 +1,12 @@
 import Koa from 'koa'
-import Router from 'koa-router'
-import routes from './routes'
 import json from 'koa-json'
 import { buildError } from './utils/response'
 import logger from 'koa-logger'
+import reload from 'koa-reload-middleware'
 
 const app = new Koa()
-const router = new Router()
 
 app.use(logger())
-
-router.use('/', routes.routes())
-
 
 app.use(async (ctx, next) => {
   try {
@@ -35,7 +30,7 @@ app.use(async (ctx, next) => {
     }
   }
 })
-app.use(router.routes())
-app.use(router.allowedMethods())
 
-app.listen(8080, () => console.log('Listening.'))
+app.use(reload(async () => {
+  return import('./routes')
+})).listen(8080, () => console.log('Listening.'))
